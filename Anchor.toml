@@ -2,13 +2,18 @@
 seeds = false
 skip-lint = false
 [programs.localnet]
-sol_swap = "8LRf1eAHEYiEStG1qGSdkFTDMpvhP6FZEBiSoDGLzYVk"
+sol_swap = "76CiXu6jUeP4H9irUKj7Xv2CrzdcnaSP8iysX27Vrpqo"
+[programs.devnet]
+sol_swap = "76CiXu6jUeP4H9irUKj7Xv2CrzdcnaSP8iysX27Vrpqo"
+[programs.testnet]
+sol_swap = "76CiXu6jUeP4H9irUKj7Xv2CrzdcnaSP8iysX27Vrpqo"
+
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet"
+cluster = "localnet"
 wallet = "/Users/mac/.config/solana/id.json"
 
 [scripts]

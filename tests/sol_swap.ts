@@ -15,6 +15,7 @@ import {
   getAccount,
 } from "@solana/spl-token";
 import { assert } from "chai";
+import { KMath } from "../app/script/math.helper";
 
 describe("sol_swap", () => {
   // Configure the client to use the local cluster.
@@ -23,17 +24,14 @@ describe("sol_swap", () => {
 
   const program = anchor.workspace.SolSwap as Program<SolSwap>;
 
-  const swapLamportAmount = new anchor.BN(0.1)
-    .mul(new anchor.BN(Math.pow(10, 9)))
-    .toNumber();
+  const swapLamportAmount = KMath.mul(0.1, 1e9).toNumber();
   const swapRate = 10; // 1 sol - 10 token
   const tokenDecimal = 0;
-  const expectReceiveTokenAmount = new anchor.BN(swapRate)
-    .mul(new anchor.BN(swapLamportAmount))
-    .mul(new anchor.BN(Math.pow(10, tokenDecimal)))
-    .div(new anchor.BN(Math.pow(10, 9)))
+  const expectReceiveTokenAmount = KMath.mul(swapRate, swapLamportAmount)
+    .multipliedBy(Math.pow(10, tokenDecimal))
+    .div(1e9)
     .toNumber();
-  const depositAmount = 1000 * Math.pow(10, tokenDecimal);
+  const tokenDepositAmount = 1000 * Math.pow(10, tokenDecimal);
   const takerAirdropAmount = 200_000_000;
 
   // accounts
@@ -62,7 +60,7 @@ describe("sol_swap", () => {
 
   const commitment: Commitment = "confirmed";
 
-  it("Initialize program", async () => {
+  it("Should initialize program success", async () => {
     // airdrop 1 SOL to payer
     const signature = await provider.connection.requestAirdrop(
       payer.publicKey,
@@ -102,7 +100,7 @@ describe("sol_swap", () => {
       0
     );
 
-    // 4. Create token accounts for dummy token mints and both main roles
+    // create token accounts for init pool and swap
     depositTokenAccount = await createAccount(
       provider.connection,
       initializer,
@@ -123,7 +121,7 @@ describe("sol_swap", () => {
       moveToken,
       depositTokenAccount,
       mintAuthority,
-      depositAmount
+      tokenDepositAmount
     );
 
     const accountRes = await getAccount(
@@ -132,12 +130,12 @@ describe("sol_swap", () => {
     );
 
     console.log("accountRes.amount: ", accountRes.amount);
-    assert.ok(Number(accountRes.amount) == depositAmount);
+    assert.ok(Number(accountRes.amount) == tokenDepositAmount);
   });
 
-  it("Initialize pool", async () => {
+  it("Should initialize pool success", async () => {
     await program.methods
-      .initialize(new anchor.BN(depositAmount))
+      .initialize(new anchor.BN(tokenDepositAmount))
       .accounts({
         initializer: initializer.publicKey,
         poolTokenAccount: poolKey,
@@ -154,7 +152,7 @@ describe("sol_swap", () => {
     assert.ok(poolRes.owner.equals(poolAuthorityKey));
     // check pool amount
     console.log("poolRes.amount: ", poolRes.amount);
-    assert.ok(Number(poolRes.amount) == depositAmount);
+    assert.ok(Number(poolRes.amount) == tokenDepositAmount);
     // check deposit token account
     let depositTokenAccountRes = await getAccount(
       provider.connection,
@@ -194,7 +192,7 @@ describe("sol_swap", () => {
     );
     // check pool amount
     assert.ok(
-      Number(poolRes.amount) == depositAmount - expectReceiveTokenAmount
+      Number(poolRes.amount) == tokenDepositAmount - expectReceiveTokenAmount
     );
     const takerLamport = await provider.connection.getBalance(
       taker.publicKey,
@@ -204,4 +202,5 @@ describe("sol_swap", () => {
     // swap amount + fee
     assert.ok(takerLamport < takerAirdropAmount);
   });
+  //Todo: corner case
 });

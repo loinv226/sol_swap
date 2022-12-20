@@ -1,21 +1,25 @@
 mod context;
 mod errors;
 
-use anchor_lang::prelude::*;
+use anchor_lang::{
+    prelude::*,
+    solana_program::{program::invoke, system_instruction},
+};
 use anchor_spl::token::{self, spl_token::instruction::AuthorityType};
 use context::*;
 use errors::*;
 
-declare_id!("8LRf1eAHEYiEStG1qGSdkFTDMpvhP6FZEBiSoDGLzYVk");
+declare_id!("76CiXu6jUeP4H9irUKj7Xv2CrzdcnaSP8iysX27Vrpqo");
 
 #[program]
 pub mod sol_swap {
 
     use super::*;
+
     const AUTHORITY_SEED: &[u8] = b"authority";
     const SWAP_RATE: u64 = 10;
 
-    pub fn initialize(ctx: Context<Initialize>, deposit_amount: u64) -> Result<()> {
+    pub fn initialize(ctx: Context<InitializePool>, deposit_amount: u64) -> Result<()> {
         let (pool_authority, _) = Pubkey::find_program_address(&[AUTHORITY_SEED], ctx.program_id);
 
         token::set_authority(
@@ -38,14 +42,9 @@ pub mod sol_swap {
             SwapError::PoolNotEnoughBalance
         );
         let from = ctx.accounts.from.to_account_info();
-        require!(
-            **from.try_borrow_mut_lamports()? >= lamport_amount,
-            SwapError::NotEnoughBalance
-        );
-        // send lamport to pool
         let to = ctx.accounts.pool_token_account.to_account_info();
-        **from.try_borrow_mut_lamports()? -= lamport_amount;
-        **to.try_borrow_mut_lamports()? += lamport_amount;
+        // send lamport to pool
+        transfer_lamports(&from, &to, lamport_amount)?;
 
         // send token to user
         let (_, pool_authority_bump) =
@@ -61,4 +60,26 @@ pub mod sol_swap {
 
         Ok(())
     }
+}
+
+fn transfer_lamports<'info>(
+    from_account: &AccountInfo<'info>,
+    to_my_account: &AccountInfo<'info>,
+    amount: u64,
+) -> Result<()> {
+    if **from_account.try_borrow_lamports()? < amount {
+        return err!(SwapError::NotEnoughBalance);
+    }
+    // debit account to credit account
+    // **from_account.lamports.borrow_mut() -= amount;
+    // // **from_account.try_borrow_mut_lamports()? -= amount;
+    // **to_account.try_borrow_mut_lamports()? += amount;
+
+    // credit account to debit account
+    invoke(
+        &system_instruction::transfer(from_account.key, to_my_account.key, amount),
+        &[from_account.clone(), to_my_account.clone()],
+    )?;
+
+    Ok(())
 }

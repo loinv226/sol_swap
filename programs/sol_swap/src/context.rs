@@ -4,7 +4,7 @@ use anchor_spl::token::{Mint, SetAuthority, Token, TokenAccount, Transfer};
 // init and deposit token into pool
 #[derive(Accounts)]
 #[instruction(deposit_amount: u64)]
-pub struct Initialize<'info> {
+pub struct InitializePool<'info> {
     #[account(mut)]
     pub initializer: Signer<'info>,
     pub mint: Account<'info, Mint>,
@@ -41,7 +41,7 @@ pub struct Swap<'info> {
     pub system_program: Program<'info, System>,
 }
 
-impl<'info> Initialize<'info> {
+impl<'info> InitializePool<'info> {
     pub fn transfer_to_pool_context(&self) -> CpiContext<'_, '_, '_, 'info, Transfer<'info>> {
         let cpi_accounts = Transfer {
             from: self.deposit_token_account.to_account_info(),

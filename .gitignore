@@ -5,3 +5,5 @@ target
 **/*.rs.bk
 node_modules
 test-ledger
+key.json
+app/script/.env
