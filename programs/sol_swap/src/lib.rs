@@ -9,7 +9,7 @@ use anchor_spl::token::{self, spl_token::instruction::AuthorityType};
 use context::*;
 use errors::*;
 
-declare_id!("76CiXu6jUeP4H9irUKj7Xv2CrzdcnaSP8iysX27Vrpqo");
+declare_id!("DJ7sVUp3VnB56PHiKkX8LTM8pUw8ghQ2yziQFbu2mygn");
 
 #[program]
 pub mod sol_swap {

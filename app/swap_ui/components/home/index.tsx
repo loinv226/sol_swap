@@ -33,7 +33,6 @@ export default function HomePage() {
           <Text textStyle="h6" mb="16px">
             Swap
           </Text>
-          <Text textStyle="caption">{`${wallet.publicKey} - connected: ${wallet.connected}}`}</Text>
           <form
             onSubmit={_form.handleSubmit(onSubmit)}
             style={{ display: "flex", flexDirection: "column" }}

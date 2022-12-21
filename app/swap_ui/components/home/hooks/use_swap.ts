@@ -9,8 +9,10 @@ import { formatNumber } from "../../../utils/number.utils";
 import getProgram from "../../../utils/swap_program";
 import { PublicKey } from "@solana/web3.js";
 import {
+  createAccount,
   getAccount,
   getOrCreateAssociatedTokenAccount,
+  TokenAccountNotFoundError,
   TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
 import { AnchorError } from "@project-serum/anchor";
@@ -28,7 +30,7 @@ export default function useSwap() {
   }, [amount]);
   const { userStore } = useStores();
   // const [submitting, setSubmitting] = useState(false);
-  const { handleError, handleAnchorError, warning } = useNotify();
+  const { handleError, handleAnchorError, warning, success } = useNotify();
 
   //   const solInput = useInput();
 
@@ -45,6 +47,10 @@ export default function useSwap() {
       console.error("NEXT_PUBLIC_MOVE_TOKEN_ADDRESS not set");
       return;
     }
+    if (!wallet || !wallet.connected) {
+      console.log("wallet not connected");
+      return;
+    }
     try {
       const { program, provider } = await getProgram(wallet as any);
 
@@ -59,17 +65,24 @@ export default function useSwap() {
         [Buffer.from(anchor.utils.bytes.utf8.encode(authoritySeed))],
         program.programId
       )[0]; // pda acc, authority of pool
+      console.log("program.programId: ", program.programId.toBase58());
+      console.log("poolKey: ", poolKey.toBase58());
+      console.log("poolAuthorityKey: ", poolAuthorityKey.toBase58());
+      console.log("poolKey: ", poolKey.toBase58());
 
-      const receiveTokenAccount = (
+      let receiveTokenAccount = (
         await getOrCreateAssociatedTokenAccount(
           provider.connection,
-          provider.wallet as any,
+          //@ts-ignore
+          provider.wallet,
           new PublicKey(process.env.NEXT_PUBLIC_MOVE_TOKEN_ADDRESS),
-          provider.wallet.publicKey
+          wallet.publicKey
+          // wallet.signAllTransactions
         )
       ).address;
-      console.log("receiveTokenAccount: ", receiveTokenAccount);
 
+      console.log("receiveTokenAccount: ", receiveTokenAccount);
+      // return;
       await program.methods
         .swap(new anchor.BN(KMath.mul(amount, 1e9).toNumber()))
         .accounts({
@@ -94,6 +107,9 @@ export default function useSwap() {
         console.log(
           `Swap success to ${receiveTokenAccount}. Token balance: ${currentBalance}`
         );
+        success(
+          `Swap success to ${receiveTokenAccount}. Your balance: ${currentBalance}`
+        );
       } else {
         console.error("Something went wrong!");
       }
@@ -103,6 +119,11 @@ export default function useSwap() {
         handleAnchorError(err);
         return;
       }
+      if (err instanceof TokenAccountNotFoundError) {
+        warning("Can't create token account");
+        return;
+      }
+
       handleError(err);
     }
     //  finally {

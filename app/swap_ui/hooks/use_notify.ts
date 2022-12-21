@@ -46,5 +46,13 @@ export function useNotify() {
     });
   }
 
-  return { handleError, handleAnchorError, success, warning };
+  function error(msg: string) {
+    toast({
+      status: "error",
+      title: msg,
+      isClosable: true,
+    });
+  }
+
+  return { handleError, handleAnchorError, success, warning, error };
 }

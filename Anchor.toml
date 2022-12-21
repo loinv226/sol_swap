@@ -2,11 +2,11 @@
 seeds = false
 skip-lint = false
 [programs.localnet]
-sol_swap = "76CiXu6jUeP4H9irUKj7Xv2CrzdcnaSP8iysX27Vrpqo"
+sol_swap = "DJ7sVUp3VnB56PHiKkX8LTM8pUw8ghQ2yziQFbu2mygn"
 [programs.devnet]
-sol_swap = "76CiXu6jUeP4H9irUKj7Xv2CrzdcnaSP8iysX27Vrpqo"
+sol_swap = "DJ7sVUp3VnB56PHiKkX8LTM8pUw8ghQ2yziQFbu2mygn"
 [programs.testnet]
-sol_swap = "76CiXu6jUeP4H9irUKj7Xv2CrzdcnaSP8iysX27Vrpqo"
+sol_swap = "DJ7sVUp3VnB56PHiKkX8LTM8pUw8ghQ2yziQFbu2mygn"
 
 
 [registry]

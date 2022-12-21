@@ -10,3 +10,6 @@ app/script/.env
 app/swap_ui/.env
 app/script/.env.dev
 app/swap_ui/.env.testnet
+app/script/.env.testnet
+app/swap_ui/.env.dev
+temp.json
