@@ -8,8 +8,6 @@ export default function HomePage() {
   const { wallet, receiveAmount, swap, _form } = useSwap();
 
   async function onSubmit(values: any) {
-    // console.log("values:", values);
-    // return upload(values);
     await swap();
   }
 

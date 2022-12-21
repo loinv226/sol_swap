@@ -24,7 +24,6 @@ const providerWallet =
         )
       )
     : new anchor.Wallet(anchor.web3.Keypair.generate());
-// console.log("providerWallet: ", providerWallet.publicKey);
 export const provider = new anchor.AnchorProvider(connection, providerWallet, {
   commitment: "confirmed",
 });
