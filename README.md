@@ -12,4 +12,14 @@ cp .env.example .env
 npx ts-node index.ts
 ```
 
-## Web ui - link:
+## Web ui - link: https://tmm.koolab.io/
+
+- Run localhost:
+
+```
+cd ./app/swap_ui
+# copy and edit .env
+cp .env.example .env
+yarn install
+yarn dev
+```
