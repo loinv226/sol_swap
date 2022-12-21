@@ -38,4 +38,7 @@ anchor keys list
 solana airdrop 1
 solana-keygen recover --outfile recover-keypair.json
 solana address -k target
+# SPL cli
+spl-token balance [address]
+spl-token supply [address]
 ```

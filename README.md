@@ -11,3 +11,5 @@ cd ./app/script
 cp .env.example .env
 npx ts-node index.ts
 ```
+
+## Web ui - link:

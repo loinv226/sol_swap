@@ -7,3 +7,4 @@ node_modules
 test-ledger
 key.json
 app/script/.env
+app/swap_ui/.env
