@@ -4,8 +4,8 @@ import { Connection } from "@solana/web3.js";
 import { Program } from "@project-serum/anchor";
 import idl from "./idl.json";
 
-export default async function getProgram(wallet: anchor.Wallet) {
-  const provider = await getProvider(
+export default function getProgram(wallet: anchor.Wallet) {
+  const provider = getProvider(
     wallet
     // new anchor.Wallet(anchor.web3.Keypair.generate())
   );
@@ -15,7 +15,7 @@ export default async function getProgram(wallet: anchor.Wallet) {
   return { program, provider };
 }
 
-export async function getProvider(wallet: anchor.Wallet) {
+export function getProvider(wallet: anchor.Wallet) {
   const network = process.env.NEXT_PUBLIC_RPC_URL ?? "http://127.0.0.1:8899";
 
   const connection = new Connection(network, "processed");

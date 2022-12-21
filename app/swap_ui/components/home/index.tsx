@@ -3,9 +3,11 @@ import { Box, Image, Text } from "@chakra-ui/react";
 import useSwap from "./hooks/use_swap";
 import { TextField } from "../common/input/textfield";
 import KButton from "../common/button";
+import { formatNumber } from "../../utils/number.utils";
 
 export default function HomePage() {
-  const { wallet, receiveAmount, swap, _form } = useSwap();
+  const { wallet, receiveAmount, swap, _form, tokenBalance, loadingBalance } =
+    useSwap();
 
   async function onSubmit(values: any) {
     await swap();
@@ -75,6 +77,9 @@ export default function HomePage() {
                 </Text>
               }
             />
+            <Text textStyle="caption" my="8px">{`Balance: ${
+              loadingBalance ? "loading..." : formatNumber(tokenBalance)
+            }`}</Text>
             <KButton
               h="50px"
               mt="16px"

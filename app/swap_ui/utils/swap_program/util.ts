@@ -25,12 +25,13 @@ export default async function getOrCreateAssociatedTokenAccount(
   mint: PublicKey,
   owner: PublicKey,
   wallet: WalletContextState,
+  forceCreate = true,
   allowOwnerOffCurve = false,
   commitment?: Commitment,
   confirmOptions?: ConfirmOptions,
   programId = TOKEN_PROGRAM_ID,
   associatedTokenProgramId = ASSOCIATED_TOKEN_PROGRAM_ID
-): Promise<Account> {
+): Promise<Account | undefined> {
   const associatedToken = await getAssociatedTokenAddress(
     mint,
     owner,
@@ -58,6 +59,9 @@ export default async function getOrCreateAssociatedTokenAccount(
       error instanceof TokenInvalidAccountOwnerError
     ) {
       // As this isn't atomic, it's possible others can create associated accounts meanwhile.
+      if (!forceCreate) {
+        return;
+      }
       try {
         const transaction = new Transaction().add(
           createAssociatedTokenAccountInstruction(
