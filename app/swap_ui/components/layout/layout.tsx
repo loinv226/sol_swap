@@ -9,7 +9,7 @@ function AppLayout(props: any) {
   const { children } = props;
 
   return (
-    <Box bg="background">
+    <Box bg="background" minH="100vh">
       <DocHead />
       <Header />
       <Box className="spaceTop" height={"58px"} w={"100%"}></Box>

@@ -17,7 +17,6 @@ export default function HomePage() {
         py="24px"
         px={{ base: "32px", "2xl": "69px" }}
         maxW="1440px"
-        minH="100vh"
         margin="0px auto"
       >
         <Box
@@ -38,12 +37,18 @@ export default function HomePage() {
             <TextField
               id="from"
               placeholder="Amount"
-              // type="number"
+              type="number"
               bg="paper"
               h="60px"
+              step="any"
               errors={_form.formState.errors}
               validator={_form.register("from", {
                 required: "This is required",
+                // pattern: /\d+\.?\d*$/,
+                min: {
+                  value: 0.01,
+                  message: "Swap amount must greater than 0.01 sol",
+                },
                 max: {
                   value: 100,
                   message: "Swap amount must less than 100 sol",
