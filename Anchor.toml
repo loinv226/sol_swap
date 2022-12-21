@@ -13,7 +13,7 @@ sol_swap = "DJ7sVUp3VnB56PHiKkX8LTM8pUw8ghQ2yziQFbu2mygn"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "testnet"
+cluster = "localnet"
 wallet = "/Users/mac/.config/solana/id.json"
 
 [scripts]

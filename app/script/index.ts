@@ -263,7 +263,7 @@ async function swap() {
 
 async function main() {
   await init();
-  // await swap();
+  await swap();
 }
 
 main()
