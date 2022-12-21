@@ -24,7 +24,7 @@ import { KMath } from "./math.helper";
 const swapRate = 10; // 1 sol - 10 token
 const tokenDecimal = 0;
 
-const tokenDepositAmount = 1000 * Math.pow(10, tokenDecimal);
+const tokenDepositAmount = 10000 * Math.pow(10, tokenDecimal);
 const swapLamportAmount = KMath.mul(
   process.env.SWAP_SOL_AMOUNT ?? "0.1",
   1e9
@@ -88,19 +88,23 @@ async function init() {
     return;
   }
 
-  console.log("Airdrop 1 sol to payer");
-  const signature = await provider.connection.requestAirdrop(
-    payer.publicKey,
-    1000_000_000
-  );
-  const latestBlockhash = await provider.connection.getLatestBlockhash();
-  await provider.connection.confirmTransaction(
-    {
-      signature,
-      ...latestBlockhash,
-    },
-    commitment
-  );
+  const payerBalance = await provider.connection.getBalance(payer.publicKey);
+  console.log("payerBalance: ", payerBalance / 1e9);
+  if (payerBalance / 1e9 < 1) {
+    console.log("Airdrop 1 sol to payer");
+    const signature = await provider.connection.requestAirdrop(
+      payer.publicKey,
+      1000_000_000
+    );
+    const latestBlockhash = await provider.connection.getLatestBlockhash();
+    await provider.connection.confirmTransaction(
+      {
+        signature,
+        ...latestBlockhash,
+      },
+      commitment
+    );
+  }
 
   // fund initializer + taker
   const fundingTx = new Transaction();
