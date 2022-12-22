@@ -84,7 +84,11 @@ export default function HomePage() {
               h="50px"
               mt="16px"
               isLoading={_form.formState.isSubmitting}
-              disabled={!wallet.connected || !_form.formState.isValid}
+              disabled={
+                !wallet.connected ||
+                !_form.formState.isValid ||
+                _form.formState.isSubmitting
+              }
               type="submit"
               title="Confirm swap"
             />
